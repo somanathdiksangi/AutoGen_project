@@ -8,6 +8,7 @@ from autogen_agentchat.ui import Console
 from autogen_core import CancellationToken
 import asyncio
 from autogen_agentchat.agents import CodeExecutorAgent
+from autogen_agentchat.base import TaskResult
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -23,17 +24,17 @@ problem_solver = AssistantAgent(
     name="ProblemSolver",
     model_client=model_client,
     description="An agent that solves problems by executing code.",
-    system_message=(
-        "You are a problem solver agent that solves DSA (Data Structures and Algorithms) problems. "
-        "You will be given a task. First, you should explain the approach to solve the task/problem. "
-        "Then, you should provide the code in a Python code block format so that it can be run by the code executor agent. "
-        "You should only give a single code block and pass it to the code executor agent. "
-        "In case there is an error in the code, you should explain how to fix it, "
-        "and then provide the corrected code again in a Python code block. "
-        "Once the code has been successfully executed and you have the result, you should explain the result in detail. "
-        "Make sure each code block has 3 test cases and the output of each test case is printed. "
-        "Once everything is done, you should explain the result and say 'STOP' to stop the conversation."
-    )
+    system_message='You are a problem solver agent that is an expert in solving DSA problems,' \
+    'You will be working with code executor agent to execute code' \
+    'You will be give a task and you should first provide a way to solve the task/problem' \
+    'Then you should give the code in Python Block format so that it can be ran by code executor agent' \
+    'You can provide Shell scipt as well if code fails due to missing libraries, make sure to use pip install command' \
+    'You should only give a single code block and pass it to executor agent'\
+    ' You should give the corrected code in Python Block format if error is there' \
+    'Once the code has been successfully executed and you have the results. You should explain the results in detail' \
+    'Make sure each code has 3 test cases and the output of each test case is printed' \
+    'if you have to save the file, save it with output.png or output.txt or output.gif' \
+    'Once everything is done, you should explain the results and say "STOP" to stop the conversation'
 )
 
 
@@ -79,13 +80,17 @@ team=RoundRobinGroupChat(
 async def run_code():
     try:
         await docker.start()
-        task = ""
+        task = "write a python code to check if number from 1 to 20 are prime or not and also plot the graph"
     
 
-        async for message in team.run_stream(task=task):
-            print('='*20)
-            print(message.source,":",message)
-            print("="*20)
+        async for message in team.run_stream(task = task):
+            print('='*200)
+            if isinstance(message, TextMessage):
+                print("Message from:", message.source)
+                print("Content:", message.content)
+            elif isinstance(message, TaskResult):
+                print (message.stop_reason)
+            print('='*200)
 
 
     except Exception as e:

@@ -1,0 +1,31 @@
+import math
+
+def is_prime(num):
+    """
+    Checks if a number is prime.
+
+    Args:
+      num: The number to check.
+
+    Returns:
+      True if the number is prime, False otherwise.
+      Returns False for numbers less than 2.
+    """
+    if num < 2:
+        return False
+    if num == 2:
+        return True
+    
+    for i in range(2, int(math.sqrt(num)) + 1):
+        if num % i == 0:
+            return False
+    return True
+
+
+# Test cases
+print(is_prime(2))  # Output: True
+print(is_prime(10)) # Output: False
+print(is_prime(17)) # Output: True
+print(is_prime(1)) # Output: False
+print(is_prime(4)) # Output: False
+print(is_prime(0)) # Output: False

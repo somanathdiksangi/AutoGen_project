@@ -45,6 +45,7 @@ async def run_code():
             task=task,
             cancellation_token=CancellationToken()
         )
+        print(result)
 
     except Exception as e:
         print(f"Error: {e}")

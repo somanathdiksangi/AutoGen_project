@@ -79,7 +79,9 @@ team=RoundRobinGroupChat(
 async def run_code():
     try:
         await docker.start()
-        task="write a pyhton code to check if a number is prime or not"
+        task = ""
+    
+
         async for message in team.run_stream(task=task):
             print('='*20)
             print(message.source,":",message)

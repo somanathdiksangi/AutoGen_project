@@ -1,0 +1,88 @@
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import random
+
+def solve_sudoku(board):
+    """Solves a Sudoku puzzle using backtracking."""
+
+    def is_safe(row, col, num):
+        # Check row
+        for i in range(9):
+            if board[row][i] == num:
+                return False
+
+        # Check column
+        for i in range(9):
+            if board[i][col] == num:
+                return False
+
+        # Check 3x3 box
+        startRow = (row // 3) * 3
+        startCol = (col // 3) * 3
+        for i in range(3):
+            for j in range(3):
+                if board[i + startRow][j + startCol] == num:
+                    return False
+
+        return True
+
+    def solve():
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] == 0:
+                    for num in range(1, 10):
+                        if is_safe(row, col, num):
+                            board[row][col] = num
+                            if solve():
+                                return True
+                            board[row][col] = 0
+                    return False
+        return True
+
+    if solve():
+        return board
+    else:
+        return None
+
+def visualize_sudoku(board):
+    fig, ax = plt.subplots()
+    im = ax.imshow(board, cmap='gray', vmin=0, vmax=9)  # Fix: Add vmin/vmax
+    ax.set_xticks([])  # Remove ticks
+    ax.set_yticks([]) # Remove ticks
+
+    def update(frame):
+        im.set_array(board)
+        return [im]
+
+    ani = animation.FuncAnimation(fig, update, frames=1, interval=100)  #interval = 100
+    ani.save('sudoku_solution.gif')
+
+
+
+# Example Sudoku board (replace with your own)
+board = [
+    [5, 3, 0, 0, 7, 0, 0, 0, 0],
+    [6, 0, 0, 1, 9, 5, 0, 0, 0],
+    [0, 9, 8, 0, 0, 0, 0, 6, 0],
+    [8, 0, 0, 0, 6, 0, 0, 0, 3],
+    [4, 0, 0, 8, 0, 3, 0, 0, 1],
+    [7, 0, 0, 0, 2, 0, 0, 0, 6],
+    [0, 6, 0, 0, 0, 0, 2, 8, 0],
+    [0, 0, 0, 4, 1, 9, 0, 0, 5],
+    [0, 0, 0, 0, 8, 0, 0, 7, 9]
+]
+
+
+board = [[random.randint(0, 9) if i == 0 else 0 for i in range(9)] for j in range(9)]
+
+
+
+
+board = np.array(board)
+
+solved_board = solve_sudoku(board.copy())
+
+if solved_board is not None:
+    visualize_sudoku(solved_board)
+else:
+    print("No solution found.")

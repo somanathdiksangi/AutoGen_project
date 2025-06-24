@@ -55,7 +55,7 @@ termination_condition=TextMessageTermination('STOP')
 team=RoundRobinGroupChat(
     participants=[problem_solver,code_executer],
     termination_condition=termination_condition,
-    max_turns=10
+    max_turns=20
 )
 
 # docker=DockerCommandLineCodeExecutor(
@@ -80,7 +80,7 @@ team=RoundRobinGroupChat(
 async def run_code():
     try:
         await docker.start()
-        task = "write a python code to check if number from 1 to 20 are prime or not and also plot the graph"
+        task = "write a python code to check and solve the 3x3 sudoku and save the gif file for it"
     
 
         async for message in team.run_stream(task = task):

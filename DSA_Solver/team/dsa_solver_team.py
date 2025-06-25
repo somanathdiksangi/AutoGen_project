@@ -1,26 +1,23 @@
 from autogen_agentchat.teams import RoundRobinGroupChat
-from autogen_agentchat.conditions import TextMessageTermination
-from config.constants import MAX_TURNS
-from agent.problem_solver import get_problem_solver
-from agent.code_executer import get_code_executor
-from config.docker_utils import get_docker_executor
+from autogen_agentchat.conditions import TextMentionTermination
 
-
-def get_team():
+def get_team(problem_solver_expert, code_executor_agent):
     """
-    Returns a RoundRobinGroupChat instance configured with the problem solver and code executor agents.
+    Returns a RoundRobinGroupChat team configured with the provided agents and a termination condition.
     
-    :return: RoundRobinGroupChat instance
+    Args:
+        problem_solver_expert (AssistantAgent): The expert agent that solves problems.
+        code_executor_agent (CodeExecutorAgent): The agent that executes code.
+    
+    Returns:
+        RoundRobinGroupChat: Configured team for collaborative problem solving.
     """
+    termination_condition = TextMentionTermination('STOP')
     
-    termination_condition = TextMessageTermination('STOP')
-
     team = RoundRobinGroupChat(
-        participants=[get_problem_solver(), get_code_executor()],
+        participants=[problem_solver_expert, code_executor_agent],
         termination_condition=termination_condition,
-        max_turns=12
+        max_turns=15
     )
     
     return team
-
-
